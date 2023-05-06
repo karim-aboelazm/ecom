@@ -1,5 +1,32 @@
 from django.db import models
+from django.contrib.auth.models import User
 
+class Admins(models.Model):
+    user          = models.OneToOneField(User,on_delete=models.CASCADE)
+    first_name    = models.CharField(max_length=100)     
+    last_name     = models.CharField(max_length=100)     
+    email         = models.EmailField()
+    phone_number  = models.CharField(max_length=100)    
+    Address       = models.CharField(max_length=100)
+    profile       = models.ImageField(upload_to="admins/")
+    class Meta:
+            verbose_name_plural ='Admins'
+    
+    def __str__(self):
+        return f"Admin with username : {self.user.username}"
+
+class Customer(models.Model):
+    user          = models.OneToOneField(User,on_delete=models.CASCADE)
+    first_name    = models.CharField(max_length=100)     
+    last_name     = models.CharField(max_length=100)     
+    email         = models.EmailField()
+    phone_number  = models.CharField(max_length=100)    
+    Address       = models.CharField(max_length=100)
+    profile       = models.ImageField(upload_to="customer/")
+    class Meta:
+            verbose_name_plural ='Customer'
+    def __str__(self):
+        return f"Customer with username : {self.user.username}"
 
 class Car(models.Model):
     car_type                 = models.CharField(max_length=200)
@@ -7,11 +34,24 @@ class Car(models.Model):
     car_color                = models.CharField(max_length=200)
     country                  = models.CharField(max_length=200)
     car_image                = models.ImageField(upload_to='cars/')
+    Brand                    = models.CharField(max_length=200,null=True,blank=True) 
+    Generation               = models.CharField(max_length=200,null=True,blank=True)
+    Body_type                = models.CharField(max_length=200,null=True,blank=True)
+    Seats                    = models.IntegerField(default=4,null=True,blank=True)
+    Doors                    = models.IntegerField(default=4,null=True,blank=True)
+    Fuel_type                = models.CharField(max_length=200,null=True,blank=True)
+    Power                    = models.CharField(max_length=200,null=True,blank=True)
+    Torque                   = models.CharField(max_length=200,null=True,blank=True)
+    Length                   = models.CharField(max_length=200,null=True,blank=True)
+    Width                    = models.CharField(max_length=200,null=True,blank=True)
+    Height                   = models.CharField(max_length=200,null=True,blank=True)
+    Assisting_systems        = models.CharField(max_length=200,null=True,blank=True)
+    Availablaty	             = models.CharField(max_length=200,choices=(('yes','yes'),('no','no')),null=True,blank=True,default='yes')
     car_is_new               = models.BooleanField(default=True)
     car_price                = models.DecimalField(max_digits=9,decimal_places=3)
     discount                 = models.DecimalField(max_digits=3,decimal_places=1)
     price_after_discount     = models.DecimalField(max_digits=9,decimal_places=3,blank=True)
-     # creating slug automaticaly
+     # creating slug automaticaly   
     def save(self, *args, **kwargs):
         self.price_after_discount = (self.car_price - self.car_price*self.discount/100)
         super(Car, self).save(*args, **kwargs)
@@ -20,7 +60,17 @@ class Car(models.Model):
     
     def __str__(self):
         return self.car_type
-
+    
+class ElectricCar(Car):
+    Battery = models.CharField(max_length=200)
+    Real_range = models.CharField(max_length=200)
+    Efficiency = models.CharField(max_length=200)
+    Charging = models.CharField(max_length=200)
+    class Meta:
+        verbose_name_plural ='ElectricCar'
+    def __str__(self):
+        return self.car_type
+    
 class Accessories(models.Model):
     acc_type                 = models.CharField(max_length=200)
     acc_model                = models.CharField(max_length=200)
